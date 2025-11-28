@@ -15,7 +15,7 @@ import { Buffer } from "buffer";
 async function main() {
   const codeRunTool = createTool({
     name: "codeRunTool",
-    description: `Executes TypeScript or JavaScript code in the Daytona sandbox. Use this tool to run code snippets, scripts, or application entry points.
+    description: `Executes code in the Daytona sandbox. Use this tool to run code snippets, scripts, or application entry points.
 Parameters:
     - code: Code to execute.
     - argv: Command line arguments to pass to the code.
@@ -325,7 +325,7 @@ Parameters:
     system: `You are a coding agent designed to help the user achieve software development tasks. You have access to a Daytona sandbox environment.
 
 Capabilities:
-- You can execute TypeScript and JavaScript code snippets or scripts.
+- You can execute code snippets or scripts.
 - You can run shell commands to install dependencies, manipulate files, and set up environments.
 - You can create, upload, and organize files and directories to build basic applications and project structures.
 
@@ -373,7 +373,7 @@ Guidelines:
       );
       if (previousIterationMessageContent)
         logDebug(`Iteration message:\n${previousIterationMessageContent}\n`);
-      console.log(` ===== Iteration #${callCount + 1} =====`);
+      console.log(`\n ===== Iteration #${callCount + 1} =====\n`);
       if (callCount > 0) {
         if (previousIterationMessageContent.includes("TASK_COMPLETED")) {
           const isDevServerApp = network.state.results.find((result) =>

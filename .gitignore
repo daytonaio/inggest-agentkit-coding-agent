@@ -6,7 +6,6 @@ yarn-error.log*
 
 # dotenv environment files
 .env
-.env.*
 
 # VS Code
 .vscode/
