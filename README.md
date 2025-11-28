@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project demonstrates a fully autonomous coding agent capable of performing software development tasks in a Daytona sandbox environment. The agent is built using [AgentKit](https://github.com/inngest/agentkit) and leverages Daytona sandboxes for secure, isolated execution. The agent can create simple web apps, run tests, execute scripts, and more - all by reasoning about the user's request and automating the necessary steps.
+This project demonstrates a fully autonomous coding agent capable of performing software development tasks in a [Daytona](https://daytona.io) sandbox environment. The agent is built using [AgentKit](https://agentkit.inngest.com/) and leverages Daytona sandboxes for secure, isolated execution. The agent can create simple web apps, run tests, execute scripts, and more - all by reasoning about the user's request and automating the necessary steps.
 
 ## Features
 
@@ -104,5 +104,5 @@ ISC
 
 ## References
 
-- [AgentKit](https://github.com/inngest/agentkit)
+- [AgentKit](https://agentkit.inngest.com/)
 - [Daytona](https://daytona.io)
