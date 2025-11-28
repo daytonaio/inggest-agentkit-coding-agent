@@ -151,6 +151,53 @@ Note: Always use double quotes (") for the outer 'content' string property. When
     },
   });
 
+  const readFileTool = createTool({
+    name: "readFileTool",
+    description: `Reads the contents of a file from the Daytona sandbox. Use this tool to retrieve source code, configuration files, or other assets for analysis or processing.`,
+    parameters: z.object({
+      filePath: z.string(),
+    }),
+    handler: async ({ filePath }, { network }) => {
+      try {
+        const sandbox = await getSandbox(network);
+        console.log(`[TOOL: readFileTool]\nFile path: ${filePath}`);
+        const fileBuffer = await sandbox.fs.downloadFile(filePath);
+        const fileContent = fileBuffer.toString("utf-8");
+        const readFileMessage = `Successfully read file: ${filePath}\nContent:\n${fileContent}`;
+        logDebug(readFileMessage);
+        return fileContent;
+      } catch (error) {
+        console.error("Error reading file:", error);
+        if (error instanceof DaytonaError)
+          return `File reading Daytona error: ${error.message}`;
+        else return "Error reading file";
+      }
+    },
+  });
+
+  const deleteFileTool = createTool({
+    name: "deleteFileTool",
+    description: `Deletes a file from the Daytona sandbox. Use this tool to remove unnecessary or temporary files from the sandbox environment.`,
+    parameters: z.object({
+      filePath: z.string(),
+    }),
+    handler: async ({ filePath }, { network }) => {
+      try {
+        const sandbox = await getSandbox(network);
+        console.log(`[TOOL: deleteFileTool]\nFile path: ${filePath}`);
+        await sandbox.fs.deleteFile(filePath);
+        const deleteFileMessage = `Successfully deleted file: ${filePath}`;
+        logDebug(deleteFileMessage);
+        return deleteFileMessage;
+      } catch (error) {
+        console.error("Error deleting file:", error);
+        if (error instanceof DaytonaError)
+          return `File deletion Daytona error: ${error.message}`;
+        else return "Error deleting file";
+      }
+    },
+  });
+
   const createDirectoryTool = createTool({
     name: "createDirectoryTool",
     description: `Creates a new directory in the Daytona sandbox. Use this tool to prepare folder structures for projects, uploads, or application data.
@@ -174,6 +221,31 @@ Parameters:
         if (error instanceof DaytonaError)
           return `Directory creation Daytona error: ${error.message}`;
         else return "Error creating directory";
+      }
+    },
+  });
+
+  const deleteDirectoryTool = createTool({
+    name: "deleteDirectoryTool",
+    description: `Deletes a directory from the Daytona sandbox. Use this tool to remove unnecessary or temporary directories from the sandbox environment.`,
+    parameters: z.object({
+      directoryPath: z.string(),
+    }),
+    handler: async ({ directoryPath }, { network }) => {
+      try {
+        const sandbox = await getSandbox(network);
+        console.log(
+          `[TOOL: deleteDirectoryTool]\nDirectory path: ${directoryPath}`
+        );
+        await sandbox.fs.deleteFile(directoryPath, true);
+        const deleteDirectoryMessage = `Successfully deleted directory: ${directoryPath}`;
+        logDebug(deleteDirectoryMessage);
+        return deleteDirectoryMessage;
+      } catch (error) {
+        console.error("Error deleting directory:", error);
+        if (error instanceof DaytonaError)
+          return `Directory deletion Daytona error: ${error.message}`;
+        else return "Error deleting directory";
       }
     },
   });
@@ -246,7 +318,7 @@ Parameters:
     },
   });
 
-  const agent = createAgent({
+  const codingAgent = createAgent({
     name: "Coding Agent",
     description:
       "An autonomous coding agent for building software in a Daytona sandbox",
@@ -275,14 +347,17 @@ Guidelines:
     model: anthropic({
       model: "claude-3-5-haiku-20241022",
       defaultParameters: {
-        max_tokens: 2048,
+        max_tokens: 1024,
       },
     }),
     tools: [
       shellTool,
       codeRunTool,
       uploadFilesTool,
+      readFileTool,
+      deleteFileTool,
       createDirectoryTool,
+      deleteDirectoryTool,
       startDevServerTool,
       checkDevServerHealthTool,
     ],
@@ -290,20 +365,24 @@ Guidelines:
 
   const network = createNetwork({
     name: "coding-agent-network",
-    agents: [agent],
+    agents: [codingAgent],
     maxIter: 30,
     defaultRouter: ({ network, callCount }) => {
+      const previousIterationMessageContent = extractTextMessageContent(
+        network.state.results.at(-1)
+      );
+      if (previousIterationMessageContent)
+        logDebug(`Iteration message:\n${previousIterationMessageContent}\n`);
       console.log(` ===== Iteration #${callCount + 1} =====`);
       if (callCount > 0) {
-        const contentStr = extractTextMessageContent(
-          network.state.results.at(-1)
-        );
-        if (contentStr.includes("TASK_COMPLETED")) {
+        if (previousIterationMessageContent.includes("TASK_COMPLETED")) {
           const isDevServerApp = network.state.results.find((result) =>
             extractTextMessageContent(result).includes("DEV_SERVER_PORT")
           );
           if (isDevServerApp) {
-            const portMatch = contentStr.match(/DEV_SERVER_PORT=([0-9]+)/);
+            const portMatch = previousIterationMessageContent.match(
+              /DEV_SERVER_PORT=([0-9]+)/
+            );
             const port =
               portMatch && portMatch[1]
                 ? parseInt(portMatch[1], 10)
@@ -313,11 +392,13 @@ Guidelines:
           return;
         }
       }
-      return agent;
+      return codingAgent;
     },
   });
 
-  const result = await network.run("Create a Next.js TodoList demo.");
+  const result = await network.run(
+    `Create a minimal React app called "Notes" that lets users add, view, and delete notes. Each note should have a title and content. Use Create React App or Vite for setup. Include a simple UI with a form to add notes and a list to display them.`
+  );
 
   try {
     const sandbox = await getSandbox(result);

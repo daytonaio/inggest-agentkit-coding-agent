@@ -22,7 +22,6 @@ export async function createSandbox(network?: NetworkRun<Record<string, any>>) {
   try {
     sandbox = await daytona.create({
       language: "typescript",
-      public: true,
     });
   } catch (error) {
     throw new Error(`Failed to create Daytona sandbox: ${error}`);
