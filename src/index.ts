@@ -51,7 +51,7 @@ Parameters:
 
   const shellTool = createTool({
     name: "shellTool",
-    description: `Executes a shell command inside the Daytona sandbox environment. Use this tool for tasks like installing packages, running scripts, or manipulating files via shell commands. Never use this tool to start a development server; always use startDevServerTool for that purpose.
+    description: `Executes a shell command inside the Daytona sandbox environment. Use this tool for tasks like installing packages, running scripts, or manipulating files via shell commands. Never use this tool to start a development server; always use startDevServerTool for this purpose.
 Parameters:
     - shellCommand: Shell command to execute (e.g., "npm install", "ls -la").
     - env: Environment variables to set for the command as key-value pairs (e.g. { "NODE_ENV": "production" }).`,
