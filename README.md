@@ -33,17 +33,19 @@ See the `.env.example` file for the exact structure and variable names. Copy `.e
 
 ## Getting Started
 
+Before proceeding with either Local or Docker setup, complete the following steps:
+1. Clone this repository to your local machine
+2. Copy `.env.example` to `.env` and add your API keys
+
 ### 1. Local Setup
 
-1. Clone this repository.
-2. Install dependencies:
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-3. Copy `.env.example` to `.env` and add your API keys.
-4. Run the agent:
+2. Run the agent:
 
    ```bash
    npm run start
