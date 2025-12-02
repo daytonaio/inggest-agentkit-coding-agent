@@ -375,11 +375,11 @@ Guidelines:
       console.log(`\n ===== Iteration #${callCount + 1} =====\n`);
       if (callCount > 0) {
         if (previousIterationMessageContent.includes("TASK_COMPLETED")) {
-          const isDevServerApp = network.state.results.find((result) =>
-            extractTextMessageContent(result).includes("DEV_SERVER_PORT")
+          const isDevServerAppMessage = network.state.results.map((result) => extractTextMessageContent(result)).find((messageContent) =>
+            messageContent.includes("DEV_SERVER_PORT")
           );
-          if (isDevServerApp) {
-            const portMatch = previousIterationMessageContent.match(
+          if (isDevServerAppMessage) {
+            const portMatch = isDevServerAppMessage.match(
               /DEV_SERVER_PORT=([0-9]+)/
             );
             const port =
