@@ -137,7 +137,7 @@ Note: Always use double quotes (") for the outer 'content' string property. When
           destination: file.path,
         }));
         await sandbox.fs.uploadFiles(filesToUpload);
-        const uploadFilesMessage = `Successfully created or update files: ${files
+        const uploadFilesMessage = `Successfully created or updated files: ${files
           .map((f) => f.path)
           .join(", ")}`;
         logDebug(uploadFilesMessage);
